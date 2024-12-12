@@ -1,0 +1,8 @@
+{
+  "display_name": "List All Tags",
+  "version": "1.0.0",
+  "description": "A new extension",
+  "author": "ceruleandeep <cerulean@cerulean.foo>",
+  "license": "MIT",
+  "loading_order": 10
+}
