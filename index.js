@@ -1,8 +1,10 @@
 import { TAG_FOLDER_DEFAULT_TYPE } from '../../../tags.js';
 import { DEFAULT_FILTER_STATE } from '../../../filters.js';
-import { uuidv4 } from '../../../utils.js';
+import { uuidv4, equalsIgnoreCaseAndAccents } from '../../../utils.js';
 
 const EXTENSION_NAME = 'List All Tags';
+
+// now for gobs and gobs of code from ST tags.js
 
 /**
  * @typedef {object} Tag - Object representing a tag
@@ -21,12 +23,23 @@ const EXTENSION_NAME = 'List All Tags';
  * @property {string} [title] - An optional title for the tooltip of this tag. If there is no tooltip specified, and "icon" is chosen, the tooltip will be the "name" property.
  */
 
-
+/**
+ * Get a tag by its name.
+ *
+ * @param tagName
+ * @returns {Tag}
+ */
 function getExisting(tagName) {
     const tags = SillyTavern.getContext().tags;
-    return tags.find(t => t.name.toLowerCase() === tagName.toLowerCase());
+    return tags.find(t => equalsIgnoreCaseAndAccents(t.name, tagName));
 }
 
+/**
+ * Create and save a new tag.
+ *
+ * @param tagName
+ * @returns {Tag} - The new or existing tag object
+ */
 function createNewTag(tagName) {
     const context = SillyTavern.getContext();
     const tags = context.tags;
@@ -39,6 +52,12 @@ function createNewTag(tagName) {
     return tag;
 }
 
+/**
+ * Create a new tag object.
+ *
+ * @param tagName
+ * @returns {Tag} - The new tag object
+ */
 function newTagObj(tagName) {
     const tags = SillyTavern.getContext().tags;
     return {
