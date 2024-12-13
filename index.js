@@ -2,7 +2,7 @@ import { TAG_FOLDER_DEFAULT_TYPE } from '../../../tags.js';
 import { DEFAULT_FILTER_STATE } from '../../../filters.js';
 import { uuidv4, equalsIgnoreCaseAndAccents } from '../../../utils.js';
 
-const EXTENSION_NAME = 'List All Tags';
+const EXTENSION_NAME = 'QR Tag Management';
 
 // now for gobs and gobs of code from ST tags.js
 
@@ -144,22 +144,47 @@ function registerSlashCommands() {
         </div>
     `,
     }));
+    
     SlashCommandParser.addCommandObject(SlashCommand.fromProps({
         name: 'tag-list-all',
         returns: 'Comma-separated list of all assigned tags',
-        callback: () => {
-            return context.tags.map(x => x.name).join(', ');
+        callback: (args) => {
+            const searchPattern = args.search;
+            const tags = context.tags;
+            
+            if (searchPattern) {
+                // Filter tags that include the search pattern (case-insensitive)
+                const filteredTags = tags.filter(tag => 
+                    tag.name.toLowerCase().includes(searchPattern.toLowerCase())
+                );
+                return filteredTags.map(x => x.name).join(', ');
+            }
+            
+            // If no search pattern, return all tags
+            return tags.map(x => x.name).join(', ');
         },
+        argList: [
+            SlashCommandArgument.fromProps({
+                name: 'search',
+                description: 'Optional search pattern to filter tags',
+                typeList: [ARGUMENT_TYPE.STRING],
+                isRequired: false,
+            }),
+        ],
         helpString: `
         <div>
-            Lists all tags. Note that there is no special handling for tags containing commas, they will be printed as-is.
+            Lists all tags, optionally filtered by a search pattern.
         </div>
         <div>
-            <strong>Example:</strong>
+            <strong>Examples:</strong>
             <ul>
                 <li>
                     <pre><code>/tag-list-all</code></pre>
-                    could return something like <code>OC, scenario, edited, funny</code>
+                    Lists all tags, e.g. "OC, scenario, edited, funny"
+                </li>
+                <li>
+                    <pre><code>/tag-list-all search="Location:"</code></pre>
+                    Lists only tags containing "Location:", e.g. "Location: House, Location: Park"
                 </li>
             </ul>
         </div>
