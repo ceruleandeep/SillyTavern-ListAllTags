@@ -154,10 +154,13 @@ function registerSlashCommands() {
             
             if (searchPattern) {
                 // Filter tags that include the search pattern (case-insensitive)
-                const filteredTags = tags.filter(tag => 
-                    tag.name.toLowerCase().includes(searchPattern.toLowerCase())
-                );
-                return filteredTags.map(x => x.name).join(', ');
+                const filteredTags = tags
+                    .filter(tag => tag.name.toLowerCase().includes(searchPattern.toLowerCase()))
+                    .map(x => x.name)
+                    .sort()
+                    .join(', ');
+                console.log("TAGS (sorted): " + filteredTags);
+                return filteredTags;
             }
             
             // If no search pattern, return all tags
@@ -189,8 +192,7 @@ function registerSlashCommands() {
             </ul>
         </div>
     `,
-    }));
-}
+    }));}
 
 (async function initExtension() {
     // noinspection DuplicatedCode
